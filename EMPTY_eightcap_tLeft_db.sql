@@ -26,7 +26,6 @@ SET default_table_access_method = heap;
 
 CREATE TABLE public.communication (
     id integer NOT NULL,
-    staff_id integer NOT NULL,
     communication_status_id integer NOT NULL,
     issue_id integer NOT NULL,
     followup_timestamp timestamp without time zone,
@@ -101,28 +100,6 @@ ALTER TABLE public.communication_issue_id_seq OWNER TO jninn;
 --
 
 ALTER SEQUENCE public.communication_issue_id_seq OWNED BY public.communication.issue_id;
-
-
---
--- Name: communication_staff_id_seq; Type: SEQUENCE; Schema: public; Owner: jninn
---
-
-CREATE SEQUENCE public.communication_staff_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.communication_staff_id_seq OWNER TO jninn;
-
---
--- Name: communication_staff_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jninn
---
-
-ALTER SEQUENCE public.communication_staff_id_seq OWNED BY public.communication.staff_id;
 
 
 --
@@ -323,7 +300,7 @@ CREATE TABLE public.issue (
     id integer NOT NULL,
     issue_resolved boolean NOT NULL,
     consumer_id integer NOT NULL,
-    department_id integer NOT NULL
+    staff_id integer NOT NULL
 );
 
 
@@ -352,28 +329,6 @@ ALTER SEQUENCE public.issue_consumer_id_seq OWNED BY public.issue.consumer_id;
 
 
 --
--- Name: issue_department_id_seq; Type: SEQUENCE; Schema: public; Owner: jninn
---
-
-CREATE SEQUENCE public.issue_department_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.issue_department_id_seq OWNER TO jninn;
-
---
--- Name: issue_department_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jninn
---
-
-ALTER SEQUENCE public.issue_department_id_seq OWNED BY public.issue.department_id;
-
-
---
 -- Name: issue_id_seq; Type: SEQUENCE; Schema: public; Owner: jninn
 --
 
@@ -393,6 +348,28 @@ ALTER TABLE public.issue_id_seq OWNER TO jninn;
 --
 
 ALTER SEQUENCE public.issue_id_seq OWNED BY public.issue.id;
+
+
+--
+-- Name: issue_staff_id_seq; Type: SEQUENCE; Schema: public; Owner: jninn
+--
+
+CREATE SEQUENCE public.issue_staff_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.issue_staff_id_seq OWNER TO jninn;
+
+--
+-- Name: issue_staff_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jninn
+--
+
+ALTER SEQUENCE public.issue_staff_id_seq OWNED BY public.issue.staff_id;
 
 
 --
@@ -495,13 +472,6 @@ ALTER TABLE ONLY public.communication ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- Name: communication staff_id; Type: DEFAULT; Schema: public; Owner: jninn
---
-
-ALTER TABLE ONLY public.communication ALTER COLUMN staff_id SET DEFAULT nextval('public.communication_staff_id_seq'::regclass);
-
-
---
 -- Name: communication communication_status_id; Type: DEFAULT; Schema: public; Owner: jninn
 --
 
@@ -572,10 +542,10 @@ ALTER TABLE ONLY public.issue ALTER COLUMN consumer_id SET DEFAULT nextval('publ
 
 
 --
--- Name: issue department_id; Type: DEFAULT; Schema: public; Owner: jninn
+-- Name: issue staff_id; Type: DEFAULT; Schema: public; Owner: jninn
 --
 
-ALTER TABLE ONLY public.issue ALTER COLUMN department_id SET DEFAULT nextval('public.issue_department_id_seq'::regclass);
+ALTER TABLE ONLY public.issue ALTER COLUMN staff_id SET DEFAULT nextval('public.issue_staff_id_seq'::regclass);
 
 
 --
@@ -603,7 +573,7 @@ ALTER TABLE ONLY public.staff ALTER COLUMN department_id SET DEFAULT nextval('pu
 -- Data for Name: communication; Type: TABLE DATA; Schema: public; Owner: jninn
 --
 
-COPY public.communication (id, staff_id, communication_status_id, issue_id, followup_timestamp, initial_call_timestamp, misc_notes) FROM stdin;
+COPY public.communication (id, communication_status_id, issue_id, followup_timestamp, initial_call_timestamp, misc_notes) FROM stdin;
 \.
 
 
@@ -655,7 +625,7 @@ COPY public.department (id, department_name) FROM stdin;
 -- Data for Name: issue; Type: TABLE DATA; Schema: public; Owner: jninn
 --
 
-COPY public.issue (id, issue_resolved, consumer_id, department_id) FROM stdin;
+COPY public.issue (id, issue_resolved, consumer_id, staff_id) FROM stdin;
 \.
 
 
@@ -699,13 +669,6 @@ SELECT pg_catalog.setval('public.communication_id_seq', 1, false);
 --
 
 SELECT pg_catalog.setval('public.communication_issue_id_seq', 1, false);
-
-
---
--- Name: communication_staff_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jninn
---
-
-SELECT pg_catalog.setval('public.communication_staff_id_seq', 1, false);
 
 
 --
@@ -758,17 +721,17 @@ SELECT pg_catalog.setval('public.issue_consumer_id_seq', 1, false);
 
 
 --
--- Name: issue_department_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jninn
---
-
-SELECT pg_catalog.setval('public.issue_department_id_seq', 1, false);
-
-
---
 -- Name: issue_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jninn
 --
 
 SELECT pg_catalog.setval('public.issue_id_seq', 1, false);
+
+
+--
+-- Name: issue_staff_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jninn
+--
+
+SELECT pg_catalog.setval('public.issue_staff_id_seq', 1, false);
 
 
 --
@@ -921,14 +884,6 @@ ALTER TABLE ONLY public.staff
 
 
 --
--- Name: issue reference_department; Type: FK CONSTRAINT; Schema: public; Owner: jninn
---
-
-ALTER TABLE ONLY public.issue
-    ADD CONSTRAINT reference_department FOREIGN KEY (department_id) REFERENCES public.department(id);
-
-
---
 -- Name: communication reference_issue; Type: FK CONSTRAINT; Schema: public; Owner: jninn
 --
 
@@ -945,11 +900,11 @@ ALTER TABLE ONLY public.consumer
 
 
 --
--- Name: communication reference_staff; Type: FK CONSTRAINT; Schema: public; Owner: jninn
+-- Name: issue reference_staff; Type: FK CONSTRAINT; Schema: public; Owner: jninn
 --
 
-ALTER TABLE ONLY public.communication
-    ADD CONSTRAINT reference_staff FOREIGN KEY (staff_id) REFERENCES public.staff(id) ON DELETE SET NULL;
+ALTER TABLE ONLY public.issue
+    ADD CONSTRAINT reference_staff FOREIGN KEY (staff_id) REFERENCES public.staff(id);
 
 
 --
