@@ -3626,6 +3626,7 @@ COPY public.issue (id, issue_resolved, consumer_id, staff_id) FROM stdin;
 999	f	978	430
 1000	f	575	901
 1001	f	372	662
+1004	t	2	2
 \.
 
 
@@ -4661,7 +4662,7 @@ SELECT pg_catalog.setval('public.communication_communication_status_id_seq', 1, 
 -- Name: communication_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jninn
 --
 
-SELECT pg_catalog.setval('public.communication_id_seq', 1, false);
+SELECT pg_catalog.setval('public.communication_id_seq', 1003, true);
 
 
 --
@@ -4724,7 +4725,7 @@ SELECT pg_catalog.setval('public.issue_consumer_id_seq', 1, false);
 -- Name: issue_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jninn
 --
 
-SELECT pg_catalog.setval('public.issue_id_seq', 1, false);
+SELECT pg_catalog.setval('public.issue_id_seq', 1006, true);
 
 
 --
